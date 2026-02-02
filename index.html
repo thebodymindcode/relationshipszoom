@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Отношения: вы точно их хотите? | Архитектура сознания</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-cream: #faf8f5;
+      --bg-warm: #f5f0ea;
+      --bg-card: #ffffff;
+      --accent-wine: #8b4a5e;
+      --accent-rose: #c17b8e;
+      --accent-gold: #b8956b;
+      --accent-light: rgba(139, 74, 94, 0.08);
+      --text-dark: #2d2a28;
+      --text-body: #4a4543;
+      --text-muted: #8a8280;
+      --border-light: rgba(139, 74, 94, 0.15);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: var(--bg-cream);
+      color: var(--text-body);
+      line-height: 1.7;
+      font-weight: 400;
+      overflow-x: hidden;
+    }
+
+    .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+    .accent { color: var(--accent-wine); }
+
+    /* Навигация */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      padding: 20px 0; background: transparent; transition: all 0.3s ease;
+    }
+    nav.scrolled {
+      background: rgba(250, 248, 245, 0.95);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 2px 30px rgba(139, 74, 94, 0.08);
+    }
+    nav .container { display: flex; justify-content: space-between; align-items: center; }
+    .logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem; font-weight: 500;
+      letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-dark);
+    }
+    .nav-cta {
+      font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--accent-wine); text-decoration: none;
+      padding: 12px 24px; border: 1px solid var(--accent-wine); transition: all 0.3s ease;
+    }
+    .nav-cta:hover { background: var(--accent-wine); color: white; }
+
+    /* Hero */
+    .hero {
+      min-height: 100vh; display: flex; flex-direction: column;
+      justify-content: center; align-items: center; text-align: center;
+      padding: 120px 24px 80px; position: relative;
+      background: linear-gradient(180deg, var(--bg-cream) 0%, var(--bg-warm) 100%);
+    }
+    .hero::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+      background: 
+        radial-gradient(ellipse 60% 40% at 50% 0%, rgba(193, 123, 142, 0.08) 0%, transparent 60%),
+        radial-gradient(circle at 80% 80%, rgba(184, 149, 107, 0.06) 0%, transparent 40%);
+      pointer-events: none;
+    }
+    .hero-label {
+      font-size: 0.7rem; letter-spacing: 0.25em; text-transform: uppercase;
+      color: var(--accent-wine); padding: 10px 20px;
+      border: 1px solid var(--border-light); margin-bottom: 40px;
+      opacity: 0; animation: fadeInUp 0.8s ease 0.2s forwards;
+    }
+    .hero-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.8rem, 8vw, 5.5rem);
+      font-weight: 400; line-height: 1.1; color: var(--text-dark);
+      margin-bottom: 20px; opacity: 0; animation: fadeInUp 0.8s ease 0.4s forwards;
+    }
+    .hero-title .line-2 {
+      display: block; font-style: italic; color: var(--accent-wine);
+      font-size: 0.65em; margin-top: 10px;
+    }
+    .hero-subtitle {
+      font-size: 1.15rem; color: var(--text-muted);
+      max-width: 550px; margin: 30px auto 50px;
+      opacity: 0; animation: fadeInUp 0.8s ease 0.6s forwards;
+    }
+
+    /* Hero Stats */
+    .hero-stats {
+      display: flex; gap: 60px; justify-content: center; flex-wrap: wrap;
+      margin-bottom: 50px; opacity: 0; animation: fadeInUp 0.8s ease 0.8s forwards;
+    }
+    .hero-stat { text-align: center; position: relative; }
+    .hero-stat::after {
+      content: ''; position: absolute; right: -30px; top: 50%;
+      transform: translateY(-50%); width: 1px; height: 40px;
+      background: var(--border-light);
+    }
+    .hero-stat:last-child::after { display: none; }
+    .stat-circle {
+      width: 80px; height: 80px; border-radius: 50%;
+      border: 2px solid var(--accent-rose);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 12px; position: relative;
+    }
+    .stat-circle::before {
+      content: ''; position: absolute; inset: 4px; border-radius: 50%;
+      background: linear-gradient(135deg, rgba(193, 123, 142, 0.1), transparent);
+    }
+    .stat-value {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.8rem; color: var(--accent-wine); position: relative; z-index: 1;
+    }
+    .stat-label {
+      font-size: 0.7rem; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--text-muted);
+    }
+    .hero-cta { opacity: 0; animation: fadeInUp 0.8s ease 1s forwards; }
+    .btn-primary {
+      display: inline-block; background: var(--accent-wine); color: white;
+      padding: 18px 50px; font-size: 0.8rem; font-weight: 500;
+      letter-spacing: 0.15em; text-transform: uppercase;
+      text-decoration: none; transition: all 0.4s ease;
+    }
+    .btn-primary:hover {
+      background: #6d3a4a; transform: translateY(-2px);
+      box-shadow: 0 15px 40px rgba(139, 74, 94, 0.25);
+    }
+    .scroll-hint {
+      position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%);
+      display: flex; flex-direction: column; align-items: center; gap: 10px;
+      opacity: 0; animation: fadeIn 1s ease 1.5s forwards;
+    }
+    .scroll-hint span {
+      font-size: 0.65rem; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--text-muted);
+    }
+    .scroll-line {
+      width: 1px; height: 40px;
+      background: linear-gradient(to bottom, var(--accent-rose), transparent);
+      animation: scrollPulse 2s ease infinite;
+    }
+
+    /* Статистика */
+    .stats-section { padding: 100px 0; background: var(--bg-warm); }
+    .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 30px; }
+    @media (max-width: 900px) { .stats-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 500px) { .stats-grid { grid-template-columns: 1fr; } }
+    .stat-card {
+      background: var(--bg-card); padding: 40px 30px; text-align: center;
+      border: 1px solid var(--border-light); transition: all 0.4s ease;
+      position: relative; overflow: hidden;
+    }
+    .stat-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(90deg, var(--accent-rose), var(--accent-gold));
+      transform: scaleX(0); transition: transform 0.4s ease;
+    }
+    .stat-card:hover::before { transform: scaleX(1); }
+    .stat-card:hover { transform: translateY(-5px); box-shadow: 0 20px 40px rgba(139, 74, 94, 0.1); }
+    .stat-card-value {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 3.5rem; font-weight: 400; color: var(--accent-wine); line-height: 1; margin-bottom: 10px;
+    }
+    .stat-card-label { font-size: 0.85rem; color: var(--text-muted); }
+    .stat-card-source { font-size: 0.65rem; color: var(--text-muted); margin-top: 15px; opacity: 0.7; }
+
+    /* Секции */
+    .section-header { display: flex; align-items: flex-start; gap: 30px; margin-bottom: 60px; }
+    .section-number {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 4rem; font-weight: 400; line-height: 1;
+      color: var(--accent-rose); opacity: 0.3;
+    }
+    .section-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2rem, 5vw, 3rem);
+      font-weight: 400; color: var(--text-dark); line-height: 1.2;
+    }
+
+    /* Знакомо */
+    .familiar { padding: 120px 0; background: var(--bg-card); }
+    .familiar-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+    @media (max-width: 768px) { .familiar-grid { grid-template-columns: 1fr; } }
+    .familiar-card {
+      padding: 30px; background: var(--bg-warm);
+      border-left: 3px solid var(--accent-rose); transition: all 0.3s ease;
+    }
+    .familiar-card:hover { transform: translateX(5px); border-left-color: var(--accent-wine); }
+    .familiar-card p { font-size: 1rem; color: var(--text-body); }
+    .familiar-conclusion {
+      margin-top: 60px; padding: 50px;
+      background: linear-gradient(135deg, var(--bg-warm) 0%, rgba(193, 123, 142, 0.08) 100%);
+      text-align: center;
+    }
+    .familiar-conclusion p {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.5rem; line-height: 1.6; color: var(--text-dark);
+    }
+
+    /* Сценарии */
+    .scenarios { padding: 120px 0; background: var(--bg-card); }
+    .scenarios-grid {
+      display: grid; grid-template-columns: 1fr 80px 1fr;
+      gap: 0; align-items: center; margin-top: 60px;
+    }
+    @media (max-width: 800px) {
+      .scenarios-grid { grid-template-columns: 1fr; gap: 30px; }
+      .scenarios-vs { display: none; }
+    }
+    .scenario-card { padding: 50px 40px; background: var(--bg-warm); height: 100%; }
+    .scenario-card.right { background: linear-gradient(135deg, rgba(139, 74, 94, 0.06), rgba(193, 123, 142, 0.04)); }
+    .scenario-label {
+      display: inline-block; font-size: 0.65rem; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--accent-wine);
+      padding: 6px 12px; background: rgba(139, 74, 94, 0.1); margin-bottom: 20px;
+    }
+    .scenario-card h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.6rem; font-weight: 400; color: var(--text-dark); margin-bottom: 20px;
+    }
+    .scenario-card p { color: var(--text-body); font-size: 1rem; }
+    .scenarios-vs { display: flex; align-items: center; justify-content: center; }
+    .vs-circle {
+      width: 80px; height: 80px; border-radius: 50%;
+      background: var(--bg-card); border: 2px solid var(--accent-rose);
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.2rem; font-style: italic; color: var(--accent-wine);
+      position: relative; z-index: 2;
+    }
+
+    /* Наука */
+    .science { padding: 120px 0; background: var(--bg-warm); }
+    .science-quote {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1.4rem, 3.5vw, 2rem); font-style: italic;
+      text-align: center; max-width: 750px; margin: 0 auto 80px;
+      line-height: 1.5; color: var(--text-dark); position: relative; padding: 0 40px;
+    }
+    .science-quote::before, .science-quote::after {
+      content: '"'; font-size: 5rem; color: var(--accent-rose); opacity: 0.2;
+      position: absolute; font-family: Georgia, serif; line-height: 1;
+    }
+    .science-quote::before { top: -20px; left: 0; }
+    .science-quote::after { bottom: -40px; right: 0; }
+
+    /* Инфографика мозга */
+    .brain-infographic {
+      display: grid; grid-template-columns: 1fr 300px 1fr;
+      gap: 40px; align-items: center; margin: 80px 0;
+    }
+    @media (max-width: 900px) {
+      .brain-infographic { grid-template-columns: 1fr; gap: 30px; }
+      .brain-visual { order: -1; }
+    }
+    .brain-facts { display: flex; flex-direction: column; gap: 25px; }
+    .brain-fact { display: flex; gap: 15px; align-items: flex-start; }
+    .brain-fact.right { flex-direction: row-reverse; text-align: right; }
+    .fact-icon {
+      width: 50px; height: 50px; border-radius: 50%;
+      background: var(--bg-card); border: 2px solid var(--accent-rose);
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.2rem; color: var(--accent-wine); flex-shrink: 0;
+    }
+    .fact-text h4 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem; font-weight: 500; color: var(--text-dark); margin-bottom: 5px;
+    }
+    .fact-text p { font-size: 0.85rem; color: var(--text-muted); }
+    .brain-visual { position: relative; }
+    .brain-circle {
+      width: 250px; height: 250px; margin: 0 auto; border-radius: 50%;
+      background: linear-gradient(135deg, rgba(193, 123, 142, 0.15), rgba(184, 149, 107, 0.1));
+      border: 2px solid var(--accent-rose);
+      display: flex; align-items: center; justify-content: center; position: relative;
+    }
+    .brain-circle::before {
+      content: ''; position: absolute; inset: 20px;
+      border-radius: 50%; border: 1px dashed var(--border-light);
+    }
+    .brain-circle-text { text-align: center; position: relative; z-index: 1; }
+    .brain-circle-text span {
+      display: block; font-family: 'Cormorant Garamond', serif;
+      font-size: 1rem; color: var(--text-muted);
+    }
+    .brain-circle-text strong {
+      display: block; font-family: 'Cormorant Garamond', serif;
+      font-size: 1.4rem; color: var(--accent-wine); margin-top: 5px;
+    }
+    .pulse-dot {
+      position: absolute; width: 12px; height: 12px;
+      background: var(--accent-wine); border-radius: 50%; animation: pulse 2s ease infinite;
+    }
+    .pulse-dot::after {
+      content: ''; position: absolute; inset: -4px; border-radius: 50%;
+      border: 2px solid var(--accent-wine); animation: pulseRing 2s ease infinite;
+    }
+    .pulse-dot:nth-child(1) { top: 20px; left: 50%; transform: translateX(-50%); }
+    .pulse-dot:nth-child(2) { bottom: 40px; left: 30px; animation-delay: 0.5s; }
+    .pulse-dot:nth-child(3) { bottom: 40px; right: 30px; animation-delay: 1s; }
+    .sources {
+      display: flex; justify-content: center; gap: 40px; flex-wrap: wrap;
+      margin-top: 60px; padding-top: 40px; border-top: 1px solid var(--border-light);
+    }
+    .source-item { text-align: center; }
+    .source-item span {
+      display: block; font-size: 0.65rem; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--text-muted); margin-bottom: 5px;
+    }
+    .source-item strong {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1rem; font-weight: 400; color: var(--text-body);
+    }
+
+    /* Программа */
+    .program { padding: 120px 0; background: var(--bg-card); }
+    .program-intro { text-align: center; max-width: 600px; margin: 0 auto 80px; }
+    .program-intro p { color: var(--text-muted); font-size: 1.1rem; margin-top: 20px; }
+    .timeline { position: relative; max-width: 800px; margin: 0 auto; }
+    .timeline::before {
+      content: ''; position: absolute; left: 50%; transform: translateX(-50%);
+      top: 0; bottom: 0; width: 2px;
+      background: linear-gradient(to bottom, var(--accent-rose), var(--accent-gold));
+    }
+    @media (max-width: 700px) { .timeline::before { left: 20px; } }
+    .timeline-item {
+      display: flex; align-items: flex-start;
+      margin-bottom: 50px; position: relative;
+    }
+    .timeline-item:nth-child(odd) { flex-direction: row-reverse; }
+    @media (max-width: 700px) {
+      .timeline-item, .timeline-item:nth-child(odd) { flex-direction: row; padding-left: 50px; }
+    }
+    .timeline-content {
+      width: calc(50% - 50px); padding: 30px; background: var(--bg-warm); position: relative;
+    }
+    @media (max-width: 700px) { .timeline-content { width: 100%; } }
+    .timeline-dot {
+      position: absolute; left: 50%; transform: translateX(-50%);
+      width: 20px; height: 20px; background: var(--bg-card);
+      border: 3px solid var(--accent-wine); border-radius: 50%; z-index: 2;
+    }
+    @media (max-width: 700px) { .timeline-dot { left: 20px; } }
+    .timeline-time {
+      display: inline-block; font-size: 0.7rem; letter-spacing: 0.15em;
+      text-transform: uppercase; color: var(--accent-wine);
+      padding: 5px 12px; background: rgba(139, 74, 94, 0.1); margin-bottom: 15px;
+    }
+    .timeline-content h4 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.4rem; color: var(--text-dark); margin-bottom: 10px;
+    }
+    .timeline-content p { color: var(--text-muted); font-size: 0.95rem; }
+
+    /* 5 элементов */
+    .elements { padding: 120px 0; background: linear-gradient(180deg, var(--bg-warm) 0%, var(--bg-cream) 100%); }
+    .elements-visual {
+      display: flex; justify-content: center; align-items: center;
+      margin: 80px 0; position: relative;
+    }
+    .elements-circle {
+      width: 350px; height: 350px; border-radius: 50%;
+      border: 2px solid var(--border-light); position: relative;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .elements-center { text-align: center; }
+    .elements-center span {
+      display: block; font-size: 0.7rem; letter-spacing: 0.15em;
+      text-transform: uppercase; color: var(--text-muted);
+    }
+    .elements-center strong {
+      display: block; font-family: 'Cormorant Garamond', serif;
+      font-size: 1.8rem; color: var(--accent-wine); margin-top: 5px;
+    }
+    .element-node { position: absolute; width: 100px; text-align: center; }
+    .element-node:nth-child(1) { top: -60px; left: 50%; transform: translateX(-50%); }
+    .element-node:nth-child(2) { top: 50px; right: -80px; }
+    .element-node:nth-child(3) { bottom: 20px; right: -60px; }
+    .element-node:nth-child(4) { bottom: 20px; left: -60px; }
+    .element-node:nth-child(5) { top: 50px; left: -80px; }
+    .element-icon {
+      width: 60px; height: 60px; border-radius: 50%;
+      background: var(--bg-card); border: 2px solid var(--accent-rose);
+      display: flex; align-items: center; justify-content: center; margin: 0 auto 10px;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.5rem; font-style: italic; color: var(--accent-wine); transition: all 0.3s ease;
+    }
+    .element-node:hover .element-icon { background: var(--accent-wine); color: white; transform: scale(1.1); }
+    .element-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1rem; color: var(--text-dark);
+    }
+    @media (max-width: 600px) { .elements-visual { display: none; } }
+    .elements-mobile { display: none; grid-template-columns: 1fr; gap: 15px; max-width: 400px; margin: 0 auto; }
+    @media (max-width: 600px) { .elements-mobile { display: grid; } }
+    .element-mobile-card {
+      display: flex; align-items: center; gap: 15px;
+      padding: 20px; background: var(--bg-card); border: 1px solid var(--border-light);
+    }
+    .element-mobile-icon {
+      width: 50px; height: 50px; border-radius: 50%;
+      background: rgba(139, 74, 94, 0.1);
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.3rem; font-style: italic; color: var(--accent-wine); flex-shrink: 0;
+    }
+    .element-mobile-text h4 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem; color: var(--text-dark); margin-bottom: 3px;
+    }
+    .element-mobile-text p { font-size: 0.8rem; color: var(--text-muted); }
+
+    /* Для кого */
+    .audience { padding: 120px 0; background: var(--bg-card); }
+    .audience-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-top: 60px; }
+    @media (max-width: 700px) { .audience-grid { grid-template-columns: 1fr; } }
+    .audience-card { padding: 40px; background: var(--bg-warm); }
+    .audience-card.yes { border-top: 3px solid var(--accent-wine); }
+    .audience-card.no { border-top: 3px solid var(--text-muted); }
+    .audience-card h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.3rem; margin-bottom: 25px; color: var(--text-dark);
+    }
+    .audience-card ul { list-style: none; }
+    .audience-card li {
+      padding: 10px 0; padding-left: 25px; position: relative;
+      color: var(--text-body); font-size: 0.95rem;
+    }
+    .audience-card.yes li::before { content: '✓'; position: absolute; left: 0; color: var(--accent-wine); font-weight: 600; }
+    .audience-card.no li::before { content: '×'; position: absolute; left: 0; color: var(--text-muted); font-weight: 600; }
+
+    /* Ведущая */
+    .host { padding: 120px 0; background: var(--bg-warm); }
+    .host-content { display: grid; grid-template-columns: 250px 1fr; gap: 60px; align-items: start; }
+    @media (max-width: 700px) { .host-content { grid-template-columns: 1fr; text-align: center; } }
+    .host-photo {
+      width: 250px; height: 300px;
+      background: linear-gradient(135deg, var(--bg-card), rgba(193, 123, 142, 0.1));
+      border: 1px solid var(--border-light);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.75rem; color: var(--text-muted); letter-spacing: 0.1em;
+    }
+    @media (max-width: 700px) { .host-photo { margin: 0 auto; } }
+    .host-info h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2rem; color: var(--text-dark); margin-bottom: 10px;
+    }
+    .host-title {
+      font-size: 0.8rem; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--accent-wine); margin-bottom: 25px;
+    }
+    .host-info p { color: var(--text-body); margin-bottom: 15px; }
+    .host-stats {
+      display: flex; gap: 50px; margin-top: 30px;
+      padding-top: 30px; border-top: 1px solid var(--border-light);
+    }
+    @media (max-width: 700px) { .host-stats { justify-content: center; } }
+    .host-stat-value {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2.5rem; color: var(--accent-wine);
+    }
+    .host-stat-label {
+      font-size: 0.7rem; text-transform: uppercase;
+      letter-spacing: 0.1em; color: var(--text-muted);
+    }
+
+    /* CTA */
+    .cta {
+      padding: 150px 0; text-align: center; position: relative;
+      background: linear-gradient(135deg, rgba(139, 74, 94, 0.05), rgba(184, 149, 107, 0.05));
+    }
+    .cta::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+      background: linear-gradient(to right, transparent, var(--border-light), transparent);
+    }
+    .cta-price-block { margin-bottom: 40px; }
+    .cta-price-old {
+      font-size: 1.1rem; color: var(--text-muted);
+      text-decoration: line-through; margin-bottom: 5px;
+    }
+    .cta-price {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 5rem; color: var(--accent-wine); line-height: 1;
+    }
+    .cta-price span { font-size: 2rem; color: var(--text-muted); }
+    .cta-includes { font-size: 0.9rem; color: var(--text-muted); margin-top: 10px; }
+    .cta h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2rem, 5vw, 3rem); color: var(--text-dark); margin-bottom: 20px;
+    }
+    .cta-subtitle { color: var(--text-body); max-width: 500px; margin: 0 auto 40px; }
+    .cta-details {
+      display: flex; justify-content: center; gap: 60px;
+      margin-top: 50px; flex-wrap: wrap;
+    }
+    .cta-detail { text-align: center; }
+    .cta-detail-icon {
+      font-size: 0.65rem; letter-spacing: 0.15em;
+      text-transform: uppercase; color: var(--text-muted); margin-bottom: 5px;
+    }
+    .cta-detail-value {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem; color: var(--text-dark);
+    }
+
+    /* Footer */
+    footer {
+      padding: 60px 0; background: var(--bg-card);
+      border-top: 1px solid var(--border-light); text-align: center;
+    }
+    .footer-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1rem; letter-spacing: 0.15em;
+      text-transform: uppercase; color: var(--text-body); margin-bottom: 20px;
+    }
+    .footer-links { display: flex; justify-content: center; gap: 30px; margin-bottom: 30px; }
+    .footer-links a {
+      font-size: 0.85rem; color: var(--text-muted);
+      text-decoration: none; transition: color 0.3s ease;
+    }
+    .footer-links a:hover { color: var(--accent-wine); }
+    .footer-legal { font-size: 0.7rem; color: var(--text-muted); }
+
+    /* Анимации */
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes scrollPulse { 0%, 100% { transform: scaleY(1); opacity: 1; } 50% { transform: scaleY(0.6); opacity: 0.5; } }
+    @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.2); } }
+    @keyframes pulseRing { 0% { transform: scale(1); opacity: 1; } 100% { transform: scale(2); opacity: 0; } }
+    .reveal { opacity: 0; transform: translateY(30px); transition: all 0.8s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+  </style>
+</head>
+<body>
+  <nav id="nav">
+    <div class="container">
+      <div class="logo">Архитектура сознания</div>
+      <a href="https://payform.ru/e9axZt5/" target="_blank" class="nav-cta">Записаться</a>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <div class="hero-label">Zoom-звонок · 90 минут · Запись навсегда</div>
+    <h1 class="hero-title">Отношения:<span class="line-2">вы точно их хотите?</span></h1>
+    <p class="hero-subtitle">Нейробиология избегания близости. Почему вы хотите отношений — и одновременно бежите от них.</p>
+    <div class="hero-stats">
+      <div class="hero-stat"><div class="stat-circle"><span class="stat-value">90</span></div><span class="stat-label">минут</span></div>
+      <div class="hero-stat"><div class="stat-circle"><span class="stat-value">6.02</span></div><span class="stat-label">февраля</span></div>
+      <div class="hero-stat"><div class="stat-circle"><span class="stat-value">∞</span></div><span class="stat-label">доступ</span></div>
+    </div>
+    <div class="hero-cta"><a href="https://payform.ru/e9axZt5/" target="_blank" class="btn-primary">Забронировать место</a></div>
+    <div class="scroll-hint"><span>Узнать больше</span><div class="scroll-line"></div></div>
+  </section>
+
+  <section class="stats-section">
+    <div class="container">
+      <div class="stats-grid">
+        <div class="stat-card reveal"><div class="stat-card-value">25%</div><div class="stat-card-label">взрослых имеют избегающий тип привязанности</div><div class="stat-card-source">Hazan & Shaver, 1987</div></div>
+        <div class="stat-card reveal"><div class="stat-card-value">70%</div><div class="stat-card-label">не осознают свой паттерн избегания</div><div class="stat-card-source">Mikulincer & Shaver, 2007</div></div>
+        <div class="stat-card reveal"><div class="stat-card-value">3×</div><div class="stat-card-label">чаще избегающие расстаются первыми</div><div class="stat-card-source">Kirkpatrick & Davis, 1994</div></div>
+        <div class="stat-card reveal"><div class="stat-card-value">92%</div><div class="stat-card-label">паттерн можно изменить через осознание</div><div class="stat-card-source">Нейропластичность</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="familiar">
+    <div class="container">
+      <div class="section-header reveal"><div class="section-number">01</div><h2 class="section-title">Узнаёте себя?</h2></div>
+      <div class="familiar-grid">
+        <div class="familiar-card reveal"><p>Говорите, что хотите отношений — но их нет</p></div>
+        <div class="familiar-card reveal"><p>Выбираете недоступных: женатых, далёких, закрытых</p></div>
+        <div class="familiar-card reveal"><p>Находите недостатки в хороших людях</p></div>
+        <div class="familiar-card reveal"><p>Чувствуете «удушье», когда всё становится серьёзно</p></div>
+        <div class="familiar-card reveal"><p>Уходите в телефон или работу в момент близости</p></div>
+        <div class="familiar-card reveal"><p>Идеализируете прошлое или будущее — но не настоящее</p></div>
+      </div>
+      <div class="familiar-conclusion reveal"><p>Это не случайность. Не «плохой характер». Не «не везёт».<br><span class="accent">Это нейробиологический паттерн.</span> И у него есть объяснение.</p></div>
+    </div>
+  </section>
+
+  <section class="scenarios">
+    <div class="container">
+      <div class="section-header reveal"><div class="section-number">02</div><h2 class="section-title">Два сценария. Один результат.</h2></div>
+      <div class="scenarios-grid">
+        <div class="scenario-card left reveal"><div class="scenario-label">Сценарий А</div><h3>Вы хотите отношений</h3><p>Вы мечтаете о близости, о партнёре, о том, чтобы вас понимали. Вы открыты. Но почему-то — не складывается.</p></div>
+        <div class="scenarios-vs"><div class="vs-circle">vs</div></div>
+        <div class="scenario-card right reveal"><div class="scenario-label">Сценарий Б</div><h3>Вы хотите <em>хотеть</em> отношений</h3><p>Вам нравится идея отношений. Но когда близость становится реальной — вы отступаете. Не осознанно. Автоматически.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="science">
+    <div class="container">
+      <div class="section-header reveal"><div class="section-number">03</div><h2 class="section-title">Это не метафора. Это анатомия.</h2></div>
+      <p class="science-quote reveal">Ваш мозг буквально выключает чувства, когда близость становится возможной. Это видно на МРТ.</p>
+      <div class="brain-infographic reveal">
+        <div class="brain-facts">
+          <div class="brain-fact"><div class="fact-icon">1</div><div class="fact-text"><h4>Режим защиты</h4><p>Префронтальная кора активируется, подавляя эмоции</p></div></div>
+          <div class="brain-fact"><div class="fact-icon">2</div><div class="fact-text"><h4>«Режим компьютера»</h4><p>Вместо чувств включается анализ и контроль</p></div></div>
+        </div>
+        <div class="brain-visual">
+          <div class="brain-circle">
+            <div class="pulse-dot"></div><div class="pulse-dot"></div><div class="pulse-dot"></div>
+            <div class="brain-circle-text"><span>При виде близости</span><strong>мозг включает защиту</strong></div>
+          </div>
+        </div>
+        <div class="brain-facts">
+          <div class="brain-fact right"><div class="fact-icon">3</div><div class="fact-text"><h4>Приглушённое удовольствие</h4><p>Стриатум реагирует слабее на социальный контакт</p></div></div>
+          <div class="brain-fact right"><div class="fact-icon">✓</div><div class="fact-text"><h4>Нейропластичность</h4><p>Паттерн можно перезаписать в любом возрасте</p></div></div>
+        </div>
+      </div>
+      <div class="sources reveal">
+        <div class="source-item"><span>Исследование</span><strong>Vrtička et al., 2012</strong></div>
+        <div class="source-item"><span>Университет</span><strong>University of Geneva</strong></div>
+        <div class="source-item"><span>Журнал</span><strong>PLOS ONE, BMC Neuroscience</strong></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="program">
+    <div class="container">
+      <div class="program-intro"><div class="section-number reveal">04</div><h2 class="section-title reveal">Что будет на звонке</h2><p class="reveal">90 минут, которые изменят понимание себя в отношениях</p></div>
+      <div class="timeline">
+        <div class="timeline-item reveal"><div class="timeline-dot"></div><div class="timeline-content"><div class="timeline-time">Часть 1</div><h4>Нейробиология избегания</h4><p>Что происходит в мозге, когда близость становится возможной. Данные fMRI, а не теории.</p></div></div>
+        <div class="timeline-item reveal"><div class="timeline-dot"></div><div class="timeline-content"><div class="timeline-time">Часть 2</div><h4>Паттерн дистанции</h4><p>Почему слово «отношения» означает расстояние. Что вы создаёте — близость или дистанцию?</p></div></div>
+        <div class="timeline-item reveal"><div class="timeline-dot"></div><div class="timeline-content"><div class="timeline-time">Часть 3</div><h4>Ключ — 5 элементов близости</h4><p>Почтение, доверие, позволение, благодарность, уязвимость.</p></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="elements">
+    <div class="container">
+      <div class="section-header reveal"><div class="section-number">05</div><h2 class="section-title">Ключ — 5 элементов близости</h2></div>
+      <div class="elements-visual reveal">
+        <div class="elements-circle">
+          <div class="element-node"><div class="element-icon">I</div><div class="element-name">Почтение</div></div>
+          <div class="element-node"><div class="element-icon">II</div><div class="element-name">Доверие</div></div>
+          <div class="element-node"><div class="element-icon">III</div><div class="element-name">Позволение</div></div>
+          <div class="element-node"><div class="element-icon">IV</div><div class="element-name">Благодарность</div></div>
+          <div class="element-node"><div class="element-icon">V</div><div class="element-name">Уязвимость</div></div>
+          <div class="elements-center"><span>Ключ к</span><strong>Близости</strong></div>
+        </div>
+      </div>
+      <div class="elements-mobile">
+        <div class="element-mobile-card"><div class="element-mobile-icon">I</div><div class="element-mobile-text"><h4>Почтение</h4><p>Видеть человека таким, какой он есть</p></div></div>
+        <div class="element-mobile-card"><div class="element-mobile-icon">II</div><div class="element-mobile-text"><h4>Доверие</h4><p>Знать, что человек будет делать то, что делает</p></div></div>
+        <div class="element-mobile-card"><div class="element-mobile-icon">III</div><div class="element-mobile-text"><h4>Позволение</h4><p>Всё — просто интересная точка зрения</p></div></div>
+        <div class="element-mobile-card"><div class="element-mobile-icon">IV</div><div class="element-mobile-text"><h4>Благодарность</h4><p>Благодарность и осуждение не сосуществуют</p></div></div>
+        <div class="element-mobile-card"><div class="element-mobile-icon">V</div><div class="element-mobile-text"><h4>Уязвимость</h4><p>Показать себя без требования исправить</p></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="audience">
+    <div class="container">
+      <div class="section-header reveal"><div class="section-number">06</div><h2 class="section-title">Для кого этот звонок</h2></div>
+      <div class="audience-grid">
+        <div class="audience-card yes reveal"><h3>Приходите, если:</h3><ul><li>Хотите понять, почему отношения «не складываются»</li><li>Замечаете, что отталкиваете хороших людей</li><li>Чувствуете страх или «удушье» при сближении</li><li>Устали от паттерна «хочу, но не получается»</li><li>Готовы смотреть правде в глаза</li></ul></div>
+        <div class="audience-card no reveal"><h3>Не приходите, если:</h3><ul><li>Ищете «волшебную таблетку»</li><li>Не готовы к честному разговору с собой</li><li>Хотите услышать, что проблема в партнёрах</li><li>Ждёте эзотерику без науки</li></ul></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="host">
+    <div class="container">
+      <div class="section-header reveal"><div class="section-number">07</div><h2 class="section-title">Ведущая</h2></div>
+      <div class="host-content reveal">
+        <div class="host-photo"><img src="https://thebodymindcode.github.io/session1/daria.jpg" alt="Дарья Ростовцева" style="width:100%;height:100%;object-fit:cover;"></div>
+        <div class="host-info">
+          <h3>Дарья Ростовцева</h3>
+          <div class="host-title">Основатель проекта «Архитектура сознания»</div>
+          <p>Практик на стыке нейробиологии и работы с подсознанием. Создатель «Протокола остановки ума» и «Кода денег».</p>
+          <p>Научный подход без «воды». Практики, которые работают. Результаты, которые можно измерить.</p>
+          <div class="host-stats">
+            <div class="host-stat"><div class="host-stat-value">200+</div><div class="host-stat-label">участников</div></div>
+            <div class="host-stat"><div class="host-stat-value">92%</div><div class="host-stat-label">отмечают изменения</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta" id="cta">
+    <div class="container">
+      <div class="cta-price-block reveal"><div class="cta-price-old">2990 ₽</div><div class="cta-price">1490 <span>₽</span></div><div class="cta-includes">Живой звонок + запись навсегда</div></div>
+      <h2 class="reveal">Готовы узнать правду?</h2>
+      <p class="cta-subtitle reveal">90 минут, которые покажут, почему вы избегаете близости — и как это изменить.</p>
+      <div class="reveal"><a href="https://payform.ru/e9axZt5/" target="_blank" class="btn-primary">Забронировать место</a></div>
+      <div class="cta-details reveal">
+        <div class="cta-detail"><div class="cta-detail-icon">Дата</div><div class="cta-detail-value">6 февраля, пятница</div></div>
+        <div class="cta-detail"><div class="cta-detail-icon">Время</div><div class="cta-detail-value">19:00 МСК</div></div>
+        <div class="cta-detail"><div class="cta-detail-icon">Формат</div><div class="cta-detail-value">Zoom + запись</div></div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container">
+      <div class="footer-logo">Архитектура сознания</div>
+      <div class="footer-links"><a href="#">Telegram</a><a href="#">Instagram</a><a href="#">Все продукты</a></div>
+      <div class="footer-legal">ИП Ростовцева Д.А. · ИНН 241103415641<br>Это не терапия. Информационный продукт.</div>
+    </div>
+  </footer>
+
+  <script>
+    const nav = document.getElementById('nav');
+    window.addEventListener('scroll', () => { nav.classList.toggle('scrolled', window.scrollY > 50); });
+    const reveals = document.querySelectorAll('.reveal');
+    const revealOnScroll = () => { reveals.forEach(el => { if (el.getBoundingClientRect().top < window.innerHeight - 100) el.classList.add('visible'); }); };
+    window.addEventListener('scroll', revealOnScroll);
+    revealOnScroll();
+  </script>
+</body>
+</html>
